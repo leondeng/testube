@@ -1,0 +1,9 @@
+{
+    "require": {
+        "symfony/finder": "^2.7",
+        "symfony/yaml": "^2.7",
+        "doctrine/inflector": "^1.0",
+        "symfony/config": "^2.7",
+        "phpunit/phpunit": "^4.7"
+    }
+}
