@@ -1,9 +1,9 @@
 <?php
 
-namespace Leondeng\TesTube\Symfony;
+namespace LeonDeng\TesTube\Symfony;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Leondeng\TesTube\TestConfiguration;
+use LeonDeng\TesTube\TestConfiguration;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Doctrine\Common\Inflector\Inflector;
 

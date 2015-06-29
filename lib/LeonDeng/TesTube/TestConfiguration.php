@@ -1,6 +1,6 @@
 <?php
 
-namespace Leondeng\TesTube;
+namespace LeonDeng\TesTube;
 
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Finder\Finder;
