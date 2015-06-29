@@ -1,9 +1,24 @@
 {
+    "name": "leondeng/testube",
+    "version": "1.0.0",
+    "description": "A Test Driven Developing Tool",
+    "keywords":
+    [
+        "TDD",
+        "testing"
+    ],
     "require": {
         "symfony/finder": "^2.7",
         "symfony/yaml": "^2.7",
         "doctrine/inflector": "^1.0",
         "symfony/config": "^2.7",
         "phpunit/phpunit": "^4.7"
+    },
+    "autoload":
+    {
+        "psr-0":
+        {
+            "LeonDeng\\TesTube": "lib/"
+        }
     }
 }
