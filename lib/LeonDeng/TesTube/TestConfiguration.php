@@ -12,13 +12,13 @@ use Doctrine\Common\Inflector\Inflector;
 
 class TestConfiguration implements ConfigurationInterface
 {
-  const DEFAULT_CONFIG_SCHEMAS = array (
+  const DEFAULT_CONFIG_SCHEMAS = array(
     'system_settings',
     'logging'
   );
-  private $configSchemas = array ();
-  private $prefixes = array ();
-  private $configs = array ();
+  private $configSchemas = array();
+  private $prefixes = array();
+  private $configs = array();
 
   public function __construct(array $prefixes, array $config_schemas) {
     $this->prefixes = $prefixes;
@@ -43,18 +43,18 @@ class TestConfiguration implements ConfigurationInterface
     $config_files = $finder->files()
       ->followLinks()
       ->name('*.yml');
-    foreach ( $config_paths as $path ) {
+    foreach ($config_paths as $path) {
       $config_files = $config_files->in($path);
     }
 
-    $configs = array ();
-    foreach ( $config_files as $config_file ) {
+    $configs = array();
+    foreach ($config_files as $config_file) {
       $configs[] = Yaml::parse($config_file->getContents());
     }
 
     if ($overrides) {
-      foreach ( $prefixes as $prefix ) {
-        $configs[] = array (
+      foreach ($prefixes as $prefix) {
+        $configs[] = array(
           $prefix => $overrides
         );
       }
@@ -76,14 +76,14 @@ class TestConfiguration implements ConfigurationInterface
 
     $node = $treeBuilder->root('tests');
 
-    foreach ( $this->prefixes as $prefix ) {
+    foreach ($this->prefixes as $prefix) {
       $node = $node->children()
         ->arrayNode($prefix)
         ->children();
       // alias holder
       $node = $node->variableNode('___meta')
         ->end();
-      foreach ( $this->getConfigSchemas($prefix) as $config_prefix ) {
+      foreach ($this->getConfigSchemas($prefix) as $config_prefix) {
         $node = $this->{'getConfigSchemaFor' . ucfirst(Inflector::camelize($config_prefix))}($node);
       }
       $node = $node->end()
@@ -99,7 +99,7 @@ class TestConfiguration implements ConfigurationInterface
       $schemas = self::DEFAULT_CONFIG_SCHEMAS;
     }
 
-    if ($prefix) array_splice($schemas, 1, 0, array (
+    if ($prefix) array_splice($schemas, 1, 0, array(
       $prefix
     ));
 
@@ -198,8 +198,8 @@ class TestConfiguration implements ConfigurationInterface
           ->end()
           ->scalarNode('verbosity')
             ->defaultValue(0)
-         ->end()
-       ->end()
+          ->end()
+        ->end()
       ->end()
     ;
 
