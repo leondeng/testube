@@ -20,5 +20,10 @@
         {
             "LeonDeng\\TesTube": "lib/"
         }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "master"
+        }
     }
 }
