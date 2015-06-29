@@ -1,9 +1,18 @@
 {
+    "name": "leondeng/testube",
+    "license": "MIT",
+    "type": "project",
+    "description": "A Test Driven Developing Tool",
     "require": {
         "symfony/finder": "^2.7",
         "symfony/yaml": "^2.7",
         "doctrine/inflector": "^1.0",
         "symfony/config": "^2.7",
         "phpunit/phpunit": "^4.7"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "master"
+        }
     }
 }
