@@ -12,8 +12,7 @@ abstract class ControllerTestCase extends WebTestCase
   protected function tearDown() {
     $refl = new \ReflectionObject($this);
     foreach ( $refl->getProperties() as $prop ) {
-      if (! $prop->isStatic() && 0 !== strpos($prop->getDeclaringClass()
-        ->getName(), 'PHPUnit_')) {
+      if (! $prop->isStatic() && 0 !== strpos($prop->class, 'PHPUnit_')) {
         $prop->setAccessible(true);
         $prop->setValue($this, null);
       }
@@ -27,7 +26,7 @@ abstract class ControllerTestCase extends WebTestCase
    *
    * @param string $key
    *          key to fetch
-   * @return array with settings
+   * @return mixed
    */
   protected function getConfig($key = null) {
     if (! isset($GLOBALS['test_configuration']) || ! isset($GLOBALS['test_configuration'][static::getConfigPrefix()])) {
@@ -86,14 +85,14 @@ abstract class ControllerTestCase extends WebTestCase
     $env_test_regex = $this->getConfig('test_regex');
     $env_test_id = $this->getConfig('test_filter');
 
-    if ($env_test_regex && !$this->isValidRegex($env_test_regex)) {
+    if (!empty($env_test_regex) && !$this->isValidRegex((string) $env_test_regex)) {
       throw new Exception('Invalid Regex provided via test_regex config variable');
     }
 
     foreach ($this->getConfig('actions') as $idx => $test) {
       $test_id = $test['test_id'];
 
-      if (($env_test_id && $env_test_id != $test_id) || ($env_test_regex && !preg_match($env_test_regex, $test_id))) {
+      if ((!empty($env_test_id) && $env_test_id != $test_id) || (!empty($env_test_regex) && !preg_match($env_test_regex, $test_id))) {
         continue;
       }
 
@@ -136,9 +135,8 @@ abstract class ControllerTestCase extends WebTestCase
    * @param array $server server parameters
    * @param string $content data posted
    * @param array $checks checks to perform
-   * @param string $test_id test id
    */
-  protected function controllerAutomatedTest($method, $uri, $parameters, $files, $server, $content, $checks, $test_id) {
+  protected function controllerAutomatedTest($method, $uri, $parameters, $files, $server, $content, $checks) {
     $client = static::createClient();
     $em = static::$kernel->getContainer()->get('doctrine')->getManager();
 
@@ -146,7 +144,7 @@ abstract class ControllerTestCase extends WebTestCase
     $this->log(sprintf('Sending request data "%s"', $content), 2);
 
     $em->beginTransaction();
-    $crawler = $client->request($method, $uri, $parameters, $files, $server, $content);
+    $client->request($method, $uri, $parameters, $files, $server, $content);
     $em->rollback();
 
     $response = $client->getResponse();
@@ -225,7 +223,7 @@ abstract class ControllerTestCase extends WebTestCase
    *
    * @param HeaderBag $header
    * @param string $body
-   * @param string $matchMap
+   * @param array $matchMap
    */
   protected function checkContentDecoded($statuscode, $header, $body, $matchMap) {
     $content = json_decode($body, true);
