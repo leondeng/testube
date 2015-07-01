@@ -9,7 +9,7 @@ use Doctrine\Common\Inflector\Inflector;
 
 abstract class ControllerTestCase extends WebTestCase
 {
-  static $test_configuration = array();
+  public static $test_configuration = array();
 
   protected function tearDown() {
     $refl = new \ReflectionObject($this);
@@ -31,17 +31,16 @@ abstract class ControllerTestCase extends WebTestCase
    * @return mixed
    */
   protected function getConfig($key = null) {
-    if (! isset(self::$test_configuration[static::getConfigPrefix()])) {
+    if (! isset(static::$test_configuration[static::getConfigPrefix()])) {
       parse_str(implode('&', array_filter($GLOBALS['argv'], function ($i) {
         return ! preg_match('/^(phpunit|-c|app|[a-zA-Z]+Test|[\-]{2}[\-a-zA-Z]+|\w+\.xml)$/', basename($i));
       })), $cli_config);
-      self::$test_configuration = TestConfiguration::getConfig(array (
+      static::$test_configuration = TestConfiguration::getConfig(array (
         static::getConfigPrefix()
       ), static::getConfigPaths(), $cli_config, static::getConfigSchemas());
-      print_r(self::$test_configuration);
     }
-    if (isset(self::$test_configuration[static::getConfigPrefix()][$key])) {
-      return self::$test_configuration[static::getConfigPrefix()][$key];
+    if (isset(static::$test_configuration[static::getConfigPrefix()][$key])) {
+      return static::$test_configuration[static::getConfigPrefix()][$key];
     } else {
       return array ();
     }
