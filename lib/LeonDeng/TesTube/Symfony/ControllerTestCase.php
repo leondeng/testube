@@ -9,6 +9,8 @@ use Doctrine\Common\Inflector\Inflector;
 
 abstract class ControllerTestCase extends WebTestCase
 {
+  static $test_configuration = array();
+
   protected function tearDown() {
     $refl = new \ReflectionObject($this);
     foreach ( $refl->getProperties() as $prop ) {
@@ -29,16 +31,17 @@ abstract class ControllerTestCase extends WebTestCase
    * @return mixed
    */
   protected function getConfig($key = null) {
-    if (! isset($GLOBALS['test_configuration']) || ! isset($GLOBALS['test_configuration'][static::getConfigPrefix()])) {
+    if (! isset(self::$test_configuration[static::getConfigPrefix()])) {
       parse_str(implode('&', array_filter($GLOBALS['argv'], function ($i) {
         return ! preg_match('/^(phpunit|-c|app|[a-zA-Z]+Test|[\-]{2}[\-a-zA-Z]+|\w+\.xml)$/', basename($i));
       })), $cli_config);
-      $GLOBALS['test_configuration'] = TestConfiguration::getConfig(array (
+      self::$test_configuration = TestConfiguration::getConfig(array (
         static::getConfigPrefix()
       ), static::getConfigPaths(), $cli_config, static::getConfigSchemas());
+      print_r(self::$test_configuration);
     }
-    if (isset($GLOBALS['test_configuration'][static::getConfigPrefix()][$key])) {
-      return $GLOBALS['test_configuration'][static::getConfigPrefix()][$key];
+    if (isset(self::$test_configuration[static::getConfigPrefix()][$key])) {
+      return self::$test_configuration[static::getConfigPrefix()][$key];
     } else {
       return array ();
     }
@@ -158,9 +161,11 @@ abstract class ControllerTestCase extends WebTestCase
         $this,
         'check' . Inflector::camelize($check_name)
       ), array (
-        $statuscode,
-        $header,
-        $body,
+        array(
+          'statuscode' => $statuscode,
+          'header' => $header,
+          'body' => $body
+        ),
         $check_args
       ));
     }
@@ -171,62 +176,53 @@ abstract class ControllerTestCase extends WebTestCase
    *
    * verifies the response code matches the configured code
    *
-   * @param int $statuscode
-   * @param HeaderBag $header
-   * @param string $body
+   * @param array $actual
    * @param string $code
    */
-  protected function checkStatusCode($statuscode, $header, $body, $code = 200) {
-    $this->assertEquals($code, $statuscode, "HTTP Code is $code");
+  protected function checkStatusCode($actual, $code = 200) {
+    $this->assertEquals($code, $actual['statuscode'], "HTTP Code is $code");
   }
 
   /**
-   * @param int $statuscode
-   * @param HeaderBag $header
-   * @param string $body
+   * @param array $actual
    * @param string $regexp
    */
-  protected function checkHeaderRegexp($statuscode, $header, $body, $regexp) {
+  protected function checkHeaderRegexp($actual, $regexp) {
     if ($regexp) {
-      $this->assertRegExp($regexp, $header, 'Response body matches Regexp');
+      $this->assertRegExp($regexp, $actual['header'], 'Response header matches Regexp');
     }
   }
 
   /**
-   * @param int $statuscode
-   * @param HeaderBag $header
-   * @param string $body
+   * @param array $actual
    * @param string $mimeType
    */
-  protected function checkContentType($statuscode, $header, $body, $mimeType) {
+  protected function checkContentType($actual, $mimeType) {
     $message = sprintf('Content type is valid (%s)', $mimeType);
 
     if (in_array($mimeType, array('json', 'application/json'))) {
-      $this->assertTrue(!is_null(json_decode($body)), $message);
+      $this->assertTrue(!is_null(json_decode($actual['body'])), $message);
     }
   }
 
   /**
-   * @param int $statuscode
-   * @param HeaderBag $header
-   * @param string $body
+   * @param array $actual
    * @param string $regexp
    */
-  protected function checkContentRegexp($statuscode, $header, $body, $regexp) {
+  protected function checkContentRegexp($actual, $regexp) {
     if ($regexp) {
-      $this->assertRegExp($regexp, $body, 'Response body matches Regexp');
+      $this->assertRegExp($regexp, $actual['body'], 'Response body matches Regexp');
     }
   }
 
   /**
    * checkContentDecoded
    *
-   * @param HeaderBag $header
-   * @param string $body
+   * @param array $actual
    * @param array $matchMap
    */
-  protected function checkContentDecoded($statuscode, $header, $body, $matchMap) {
-    $content = json_decode($body, true);
+  protected function checkContentDecoded($actual, $matchMap) {
+    $content = json_decode($actual['body'], true);
     $flat_content = $this->flattenArray((array) $content, '.', false);
 
     foreach ($matchMap as $path => $value) {
