@@ -1860,14 +1860,15 @@
     "packages-dev": [
         {
             "name": "leondeng/version_bump_test",
-            "version": "0.1.16",
+            "version": "0.1.17",
             "source": {
                 "type": "git",
                 "url": "git@github.com:leondeng/ver_bump_test.git",
-                "reference": "e9bca83b3fdba010208cb8411c5cfd0e89460ff0"
+                "reference": "a826d72473d973a80731c66d117a93a5f8539af5"
             },
             "bin": [
-                "bin/bump_version.sh"
+                "bin/bump_version.sh",
+                "bin/functions.sh"
             ],
             "type": "library",
             "license": [
@@ -1883,7 +1884,7 @@
             "keywords": [
                 "version bump"
             ],
-            "time": "2016-10-24 01:17:26"
+            "time": "2016-10-24 01:25:00"
         }
     ],
     "aliases": [],
