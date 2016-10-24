@@ -12,6 +12,15 @@
         "doctrine/inflector": "^1.0",
         "phpunit/phpunit": "^4.7"
     },
+    "require-dev": {
+        "leondeng/version_bump_test": "^0.1"
+    },
+    "repositories": [
+        {
+            "url": "git@github.com:leondeng/ver_bump_test.git",
+            "type": "git"
+        }
+    ],
     "autoload":
     {
         "psr-0":
